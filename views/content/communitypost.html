@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Community Posts</title>
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/node_modules/@fortawesome/fontawesome-free/css/all.css">
+    <script src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js" defer></script>
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .container {
+            margin-top: 40px;
+        }
+        .post {
+            margin-bottom: 30px;
+        }
+        /* ✅ Green navbar customization */
+        .navbar-custom {
+            background-color: #28a745;
+        }
+        .navbar-custom .nav-link,
+        .navbar-custom .navbar-brand,
+        .navbar-custom .dropdown-item {
+            color: white;
+        }
+        .navbar-custom .nav-link:hover,
+        .navbar-custom .navbar-brand:hover,
+        .navbar-custom .dropdown-item:hover {
+            color: #d4ffd4;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ✅ GREEN NAVIGATION BAR -->
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="../../index.html">Volunteer Connect</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../../index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="../../views/content/opportunities.html">Opportunities</a></li>
+                <li class="nav-item"><a class="nav-link" href="../../views/content/events.html">Events</a></li>
+                <li class="nav-item"><a class="nav-link" href="../../views/content/contactus.html">Contact Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="../../views/content/about.html">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="../../views/content/donate.html">Donate</a></li>
+                <li class="nav-item"><a class="nav-link" href="../../views/content/news.html">News</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">More</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="../../views/content/privacypolicy.html">Privacy Policy</a></li>
+                        <li><a class="dropdown-item" href="../../views/content/terms.html">Terms of Service</a></li>
+                        <li><a class="dropdown-item" href="../../views/content/gallary.html">Gallery</a></li>
+                        <li><a class="dropdown-item" href="../../views/content/communitypost.html">Community Post</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ✅ COMMUNITY POST SECTION -->
+<div class="container">
+    <h2 class="mb-4 text-center">Community Posts</h2>
+
+    <form id="postForm" class="mb-4">
+        <div class="mb-3">
+            <input type="text" class="form-control" id="postAuthor" placeholder="Your Name" required>
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" id="postContent" rows="3" placeholder="What's on your mind?" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Create Post</button>
+    </form>
+
+    <div id="postsList"></div>
+</div>
+
+<!-- ✅ Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" id="editContent" rows="4" required></textarea>
+                    <input type="hidden" id="editIndex">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this post?
+                <input type="hidden" id="deleteIndex">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ Scripts -->
+<script>
+    const postForm = document.getElementById('postForm');
+    const postsList = document.getElementById('postsList');
+
+    function loadPosts() {
+        postsList.innerHTML = '';
+        const posts = JSON.parse(localStorage.getItem('community_posts') || '[]');
+        posts.forEach((post, index) => {
+            const postDiv = document.createElement('div');
+            postDiv.className = 'card post';
+            postDiv.innerHTML = `
+        <div class="card-body">
+          <h5 class="card-title">${post.author}</h5>
+          <p class="card-text" id="post-text-${index}">${post.content}</p>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-secondary" onclick="openEditModal(${index})"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn btn-sm btn-outline-danger" onclick="openDeleteModal(${index})"><i class="fas fa-trash"></i> Delete</button>
+          </div>
+        </div>
+      `;
+            postsList.appendChild(postDiv);
+        });
+    }
+
+    postForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const author = document.getElementById('postAuthor').value.trim();
+        const content = document.getElementById('postContent').value.trim();
+        const posts = JSON.parse(localStorage.getItem('community_posts') || '[]');
+        posts.push({ author, content });
+        localStorage.setItem('community_posts', JSON.stringify(posts));
+        postForm.reset();
+        loadPosts();
+    });
+
+    function openEditModal(index) {
+        const posts = JSON.parse(localStorage.getItem('community_posts'));
+        document.getElementById('editContent').value = posts[index].content;
+        document.getElementById('editIndex').value = index;
+        new bootstrap.Modal(document.getElementById('editModal')).show();
+    }
+
+    document.getElementById('editForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const index = document.getElementById('editIndex').value;
+        const newContent = document.getElementById('editContent').value.trim();
+        const posts = JSON.parse(localStorage.getItem('community_posts'));
+        posts[index].content = newContent;
+        localStorage.setItem('community_posts', JSON.stringify(posts));
+        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+        loadPosts();
+    });
+
+    function openDeleteModal(index) {
+        document.getElementById('deleteIndex').value = index;
+        new bootstrap.Modal(document.getElementById('deleteModal')).show();
+    }
+
+    document.getElementById('confirmDelete').addEventListener('click', () => {
+        const index = document.getElementById('deleteIndex').value;
+        const posts = JSON.parse(localStorage.getItem('community_posts'));
+        posts.splice(index, 1);
+        localStorage.setItem('community_posts', JSON.stringify(posts));
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+        loadPosts();
+    });
+
+    window.onload = loadPosts;
+</script>
+</body>
+</html>

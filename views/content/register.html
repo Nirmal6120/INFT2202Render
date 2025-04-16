@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Account</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #message {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Register Account</h2>
+    <form id="registerForm">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="contact" placeholder="Contact Number" pattern="\d{10}" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Register</button>
+    </form>
+    <div id="message"></div>
+</div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const username = this.username.value.trim();
+        const email = this.email.value.trim();
+        const contact = this.contact.value.trim();
+        const password = this.password.value;
+
+        if (localStorage.getItem(username)) {
+            document.getElementById('message').textContent = 'User already exists!';
+            document.getElementById('message').style.color = 'red';
+        } else {
+            const userData = { email, contact, password };
+            localStorage.setItem(username, JSON.stringify(userData));
+            localStorage.setItem('current_user', username);
+
+            document.getElementById('message').textContent = `Welcome, ${username}!`;
+            document.getElementById('message').style.color = 'green';
+
+            setTimeout(() => {
+                window.location.href = '../../index.html';
+            }, 2000);
+        }
+
+        this.reset();
+    });
+</script>
+</body>
+</html>

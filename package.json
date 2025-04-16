@@ -1,0 +1,43 @@
+{
+  "name": "ice-4",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node src/server/server.js",
+    "dev": "tsc && node src/server/server.js",
+    "clean": "rimraf dist",
+    "clean-build": "npm run clean && npm run build",
+    "watch": "tsc --watch",
+    "start:dev": "nodemon src/server/server.js"
+  },
+  "main": "index.js",
+  "author": "Nirmal Patel",
+  "license": "MIT",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@popperjs/core": "^2.11.8",
+    "bootstrap": "^5.3.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "mongodb": "^6.15.0",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.1",
+    "nodemon": "^3.1.9",
+    "rimraf": "^6.0.1"
+  },
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nirmal6120/INFT2202Render.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nirmal6120/INFT2202Render/issues"
+  },
+  "homepage": "https://github.com/Nirmal6120/INFT2202Render#readme",
+  "description": ""
+}

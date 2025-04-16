@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Volunteer Connect</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/Content/app.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+
+    <style>
+        /* Gallery Specific Styles */
+        .gallery-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        #gallery-container {
+            padding: 30px 0;
+        }
+
+        .gallery-title {
+            color: #4CAF50;
+            margin-bottom: 30px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Modal Styling */
+        .modal-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/index.html">Volunteer Connect</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="/index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="opportunities.html">Opportunities</a></li>
+                <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                <li class="nav-item"><a class="nav-link" href="contactus.html">Contact Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="donate.html">Donate</a></li>
+                <li class="nav-item"><a class="nav-link active" href="gallary.html">Gallery</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Gallery Section -->
+<div class="container mt-5">
+    <h2 class="text-center gallery-title">Volunteer Events Gallery</h2>
+    <div class="row" id="gallery-container">
+        <!-- Images will be dynamically inserted here -->
+    </div>
+</div>
+
+<!-- Modal for displaying image and Content -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modal-image" class="modal-image" src="" alt="">
+                <p id="image-description" class="lead"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="mt-5">
+    <div class="container">
+        <p class="text-center mb-0">&copy; Volunteer Connect made by Nirmal And Jalpan</p>
+    </div>
+</footer>
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/data/gallery.json")
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to load gallery data");
+                return response.json();
+            })
+            .then(images => {
+                const galleryContainer = document.getElementById("gallery-container");
+                if (!galleryContainer) return;
+
+                images.forEach(image => {
+                    const colDiv = document.createElement("div");
+                    colDiv.className = "col-md-4 mb-4";
+
+                    const link = document.createElement("a");
+                    link.href = image.src;
+                    link.setAttribute("data-lightbox", "gallery");
+                    link.setAttribute("data-title", image.title);
+                    link.setAttribute("data-bs-toggle", "modal");
+                    link.setAttribute("data-bs-target", "#imageModal");
+
+                    link.addEventListener("click", function() {
+                        document.getElementById("imageModalLabel").textContent = image.title;
+                        document.getElementById("modal-image").src = image.src;
+                        document.getElementById("modal-image").alt = image.alt;
+                        document.getElementById("image-description").textContent = image.title;
+                    });
+
+                    const img = document.createElement("img");
+                    img.src = image.src;
+                    img.alt = image.alt;
+                    img.className = "img-fluid gallery-img";
+
+                    link.appendChild(img);
+                    colDiv.appendChild(link);
+                    galleryContainer.appendChild(colDiv);
+                });
+            })
+            .catch(error => console.error("Error loading gallery:", error));
+    });
+</script>
+
+</body>
+</html>
